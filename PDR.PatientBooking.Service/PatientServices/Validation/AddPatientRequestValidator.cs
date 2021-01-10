@@ -31,8 +31,8 @@ namespace PDR.PatientBooking.Service.PatientServices.Validation
             if (PatientAlreadyInDb(request, ref result))
                 return result;
 
-            if (PatientCannotBookInThePast(request, ref result))
-                return result;
+            ////if (PatientCannotBookInThePast(request, ref result))
+            ////    return result;
 
             return result;
         }
@@ -52,7 +52,6 @@ namespace PDR.PatientBooking.Service.PatientServices.Validation
 
             if (!new EmailAddressAttribute().IsValid(request.Email))
                 errors.Add("Email must be a valid email address");
-
 
             if (errors.Any())
             {
@@ -90,8 +89,8 @@ namespace PDR.PatientBooking.Service.PatientServices.Validation
 
         private bool PatientCannotBookInThePast(AddPatientRequest request, ref PdrValidationResult result)
         {
-            if (_context.Patient.Any(x=> x.Orders.FirstOrDefault().StartTime < DateTime.UtcNow))
-            {
+            if (_context.Patient.Any(x=>x.Orders.FirstOrDefault().StartTime < DateTime.UtcNow.Subtract(TimeSpan.FromMinutes(5))))
+            {   
                 result.PassedValidation = false;
                 result.Errors.Add("The booking time is in the past");
                 return true;

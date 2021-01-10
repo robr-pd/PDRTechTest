@@ -45,7 +45,6 @@ namespace PDR.PatientBooking.Service.Tests.PatientServices.Validation
         {
 
         }
-
         [Test]
         public void ValidateRequest_AllChecksPass_ReturnsPassedValidationResult()
         {
@@ -174,18 +173,22 @@ namespace PDR.PatientBooking.Service.Tests.PatientServices.Validation
             res.Errors.Should().Contain("A patient with that email address already exists");
         }
 
+        
         [Test]
         public void ValidateRequest_PatientTryToBookTheAppointmentInthePast_ReturnsFailedValidationResult()
         {
             //arrange
             var request = GetValidRequest();
+            request.Email = "user-past@domain.com";
             var patient = _fixture
                 .Build<Patient>()
                 .With(x => x.Email, request.Email)
-                .With(x => x.Orders.FirstOrDefault().StartTime, DateTime.UtcNow.Subtract(TimeSpan.FromHours(5)))
                 .Create();
 
+            patient.Orders.FirstOrDefault().StartTime = DateTime.UtcNow.Subtract(TimeSpan.FromHours(3));
             _context.Add(patient);
+            _context.SaveChanges();
+
 
             //act
             var res = _addPatientRequestValidator.ValidateRequest(request);

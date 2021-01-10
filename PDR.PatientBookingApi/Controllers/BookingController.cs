@@ -12,6 +12,7 @@ namespace PDR.PatientBookingApi.Controllers
     public class BookingController : ControllerBase
     {
         private readonly PatientBookingContext _context;
+        private Order order;
 
         public BookingController(PatientBookingContext context)
         {
@@ -19,20 +20,20 @@ namespace PDR.PatientBookingApi.Controllers
         }
 
         [HttpGet("patient/{identificationNumber}/next")]
-        public IActionResult GetPatientNextAppointnemtn(long identificationNumber)
+        public IActionResult GetPatientNextAppointment(long identificationNumber)
         {
             var bockings = _context.Order.OrderBy(x => x.StartTime).ToList();
 
             if (bockings.Where(x => x.Patient.Id == identificationNumber).Count() == 0)
             {
-                return StatusCode(502);
+                return StatusCode(404);
             }
             else
             {
                 var bookings2 = bockings.Where(x => x.PatientId == identificationNumber);
                 if (bookings2.Where(x => x.StartTime > DateTime.Now).Count() == 0)
                 {
-                    return StatusCode(502);
+                    return StatusCode(404);
                 }
                 else
                 {
@@ -99,6 +100,30 @@ namespace PDR.PatientBookingApi.Controllers
             latestBooking.SurgeryType = (int)bookings2[i].GetSurgeryType();
 
             return latestBooking;
+        }
+
+        [HttpDelete("patient/{identificationNumber}/{bookingnumber}")]
+        public IActionResult RemovePatientAppointment(long identificationNumber, Guid bookingnumber)
+        {
+            var bockings = _context.Order.OrderBy(x => x.StartTime).ToList();
+
+            if (bockings.Where(x => x.Patient.Id == identificationNumber).Count() == 0)
+            {
+                return StatusCode(404);
+            }
+
+            var bookings2 = bockings.Where(x => x.PatientId == identificationNumber);
+            if (bookings2.Where(x => x.Id == bookingnumber).Count() == 0)
+            {
+                return StatusCode(404);
+            }
+
+            using (order = (Order)_context.Order.Where(x => x.Id == bookingnumber))
+            {
+                _context.Order.Remove(order);
+                _context.SaveChanges();
+                return Ok("Remove the appointment successfully.");
+            }
         }
 
         private class MyOrderResult
