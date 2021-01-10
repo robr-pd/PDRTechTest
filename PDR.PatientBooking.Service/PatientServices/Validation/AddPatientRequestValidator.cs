@@ -1,9 +1,11 @@
-﻿using PDR.PatientBooking.Data;
+﻿using System;
+using PDR.PatientBooking.Data;
 using PDR.PatientBooking.Service.PatientServices.Requests;
 using PDR.PatientBooking.Service.Validation;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace PDR.PatientBooking.Service.PatientServices.Validation
 {
@@ -27,6 +29,9 @@ namespace PDR.PatientBooking.Service.PatientServices.Validation
                 return result;
 
             if (PatientAlreadyInDb(request, ref result))
+                return result;
+
+            if (PatientCannotBookInThePast(request, ref result))
                 return result;
 
             return result;
@@ -77,6 +82,18 @@ namespace PDR.PatientBooking.Service.PatientServices.Validation
             {
                 result.PassedValidation = false;
                 result.Errors.Add("A clinic with that ID could not be found");
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool PatientCannotBookInThePast(AddPatientRequest request, ref PdrValidationResult result)
+        {
+            if (_context.Patient.Any(x=> x.Orders.FirstOrDefault().StartTime < DateTime.UtcNow))
+            {
+                result.PassedValidation = false;
+                result.Errors.Add("The booking time is in the past");
                 return true;
             }
 
