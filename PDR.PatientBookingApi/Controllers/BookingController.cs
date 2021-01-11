@@ -118,12 +118,10 @@ namespace PDR.PatientBookingApi.Controllers
                 return StatusCode(404);
             }
 
-            using (order = (Order)_context.Order.Where(x => x.Id == bookingnumber))
-            {
-                _context.Order.Remove(order);
-                _context.SaveChanges();
-                return Ok("Remove the appointment successfully.");
-            }
+            var order = bookings2.FirstOrDefault(x => x.Id == bookingnumber);
+            _context.Order.Remove(order);
+            _context.SaveChanges();
+            return Ok("Remove the appointment successfully.");
         }
 
         private class MyOrderResult
