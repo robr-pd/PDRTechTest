@@ -7,6 +7,7 @@ using PDR.PatientBooking.Data.Models;
 using PDR.PatientBooking.Service.PatientServices.Requests;
 using PDR.PatientBooking.Service.PatientServices.Validation;
 using System;
+using System.Linq;
 
 namespace PDR.PatientBooking.Service.Tests.PatientServices.Validation
 {
@@ -44,7 +45,6 @@ namespace PDR.PatientBooking.Service.Tests.PatientServices.Validation
         {
 
         }
-
         [Test]
         public void ValidateRequest_AllChecksPass_ReturnsPassedValidationResult()
         {
@@ -109,8 +109,6 @@ namespace PDR.PatientBooking.Service.Tests.PatientServices.Validation
         [TestCase("user@")]
         [TestCase("@")]
         [TestCase("user")]
-        [TestCase(null)]
-        [TestCase("")]
         public void ValidateRequest_InvalidEmail_ReturnsFailedValidationResult(string email)
         {
             //arrange
@@ -173,6 +171,31 @@ namespace PDR.PatientBooking.Service.Tests.PatientServices.Validation
             //assert
             res.PassedValidation.Should().BeFalse();
             res.Errors.Should().Contain("A patient with that email address already exists");
+        }
+
+        
+        [Test]
+        public void ValidateRequest_PatientTryToBookTheAppointmentInthePast_ReturnsFailedValidationResult()
+        {
+            //arrange
+            var request = GetValidRequest();
+            request.Email = "user-past@domain.com";
+            var patient = _fixture
+                .Build<Patient>()
+                .With(x => x.Email, request.Email)
+                .Create();
+
+            patient.Orders.FirstOrDefault().StartTime = DateTime.UtcNow.Subtract(TimeSpan.FromHours(3));
+            _context.Add(patient);
+            _context.SaveChanges();
+
+
+            //act
+            var res = _addPatientRequestValidator.ValidateRequest(request);
+
+            //assert
+            res.PassedValidation.Should().BeFalse();
+            res.Errors.Should().Contain("The booking time is in the past");
         }
 
         [Test]

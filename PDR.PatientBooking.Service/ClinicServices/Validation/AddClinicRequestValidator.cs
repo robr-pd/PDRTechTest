@@ -9,6 +9,7 @@ namespace PDR.PatientBooking.Service.ClinicServices.Validation
     public class AddClinicRequestValidator : IAddClinicRequestValidator
     {
         private readonly PatientBookingContext _context;
+        private ClinicService _clinicService;
 
         public AddClinicRequestValidator(PatientBookingContext context)
         {

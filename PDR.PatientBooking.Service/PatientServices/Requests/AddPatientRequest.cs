@@ -1,5 +1,7 @@
 ﻿using PDR.PatientBooking.Service.Enums;
 using System;
+using System.Collections;
+using PDR.PatientBooking.Data.Models;
 
 namespace PDR.PatientBooking.Service.PatientServices.Requests
 {
