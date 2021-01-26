@@ -100,16 +100,18 @@ namespace PDR.PatientBooking.Service.Tests.PatientServices
                 Gender = (int)request.Gender,
                 Email = request.Email,
                 DateOfBirth = request.DateOfBirth,
-                Orders = new List<Order>(),
-                ClinicId = request.ClinicId,
-                Created = DateTime.UtcNow
+                ClinicId = request.ClinicId
             };
 
             //act
             _patientService.AddPatient(request);
 
             //assert
-            _context.Patient.Should().ContainEquivalentOf(expected, options => options.Excluding(patient => patient.Id));
+            _context.Patient.Should().ContainEquivalentOf(expected, options => options
+                           .Excluding(ctx => ctx.Orders)
+                           .Excluding(ctx => ctx.Created)
+                           .Using<long>(ctx => ctx.Subject.Should().NotBe(0))
+                           .When(ctx => ctx.SelectedMemberPath == "Id"));
         }
 
         [Test]

@@ -98,16 +98,18 @@ namespace PDR.PatientBooking.Service.Tests.DoctorServices
                 LastName = request.LastName,
                 Gender = (int)request.Gender,
                 Email = request.Email,
-                DateOfBirth = request.DateOfBirth,
-                Orders = new List<Order>(),
-                Created = DateTime.UtcNow
+                DateOfBirth = request.DateOfBirth
             };
 
             //act
             _doctorService.AddDoctor(request);
 
             //assert
-            _context.Doctor.Should().ContainEquivalentOf(expected, options => options.Excluding(doctor => doctor.Id));
+            _context.Doctor.Should().ContainEquivalentOf(expected, options => options
+                .Excluding(ctx => ctx.Orders) // auto generated
+                .Excluding(ctx => ctx.Created) // auto generated                
+                .Using<long>(ctx => ctx.Subject.Should().NotBe(0))
+                .When(ctx => ctx.SelectedMemberPath == "Id"));
         }
 
         [Test]
