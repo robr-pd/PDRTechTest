@@ -106,7 +106,9 @@ namespace PDR.PatientBookingApi.Controllers
         [HttpPut("patient/{identificationNumber}/{bookingId}/cancel")]
         public IActionResult CancelBooking(long identificationNumber, Guid bookingId)
         {
-            var booking = _context.Order.FirstOrDefault(o => o.PatientId == identificationNumber && o.Id == bookingId);
+            var booking = _context.Order.FirstOrDefault(o => o.PatientId == identificationNumber 
+                                                        && o.Id == bookingId
+                                                        && o.StartTime > DateTime.UtcNow);
 
             if (booking is null)
             {
