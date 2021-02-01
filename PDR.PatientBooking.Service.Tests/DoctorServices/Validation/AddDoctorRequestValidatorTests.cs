@@ -25,7 +25,7 @@ namespace PDR.PatientBooking.Service.Tests.DoctorServices.Validation
             // Boilerplate
             _fixture = new Fixture();
 
-            //Prevent fixture from generating from entity circular references 
+            //Prevent fixture from generating from entity circular references
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior(1));
 
             // Mock setup
@@ -42,7 +42,6 @@ namespace PDR.PatientBooking.Service.Tests.DoctorServices.Validation
 
         private void SetupMockDefaults()
         {
-
         }
 
         [Test]
@@ -122,7 +121,14 @@ namespace PDR.PatientBooking.Service.Tests.DoctorServices.Validation
 
             //assert
             res.PassedValidation.Should().BeFalse();
-            res.Errors.Should().Contain("Email must be a valid email address");
+            if (string.IsNullOrEmpty(email))
+            {
+                res.Errors.Should().Contain("Email must be populated");
+            }
+            else
+            {
+                res.Errors.Should().Contain("Email must be a valid email address");
+            }
         }
 
         [TestCase("user@domain.com")]
