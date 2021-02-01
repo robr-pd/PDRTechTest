@@ -1,7 +1,7 @@
 ﻿using PDR.PatientBooking.Data;
 using PDR.PatientBooking.Data.Models;
 using PDR.PatientBooking.Service.BookingServices.Requests;
-
+using PDR.PatientBooking.Service.BookingServices.Validations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +12,23 @@ namespace PDR.PatientBooking.Service.BookingServices
     public class BookingService : IBookingService
     {
         private readonly PatientBookingContext _context;
+        private readonly IAddBokingRequestValidator _validator;
 
-        public BookingService(PatientBookingContext context)
+        public BookingService(PatientBookingContext context, IAddBokingRequestValidator validator)
         {
             _context = context;
+            _validator = validator;
         }
 
         public void AddPatientBooking(NewBookingRequest request)
         {
+            var validationResult = _validator.ValidateRequest(request);
+
+            if (!validationResult.PassedValidation)
+            {
+                throw new ArgumentException(validationResult.Errors.First());
+            }
+
             var bookingId = new Guid();
             var bookingStartTime = request.StartTime;
             var bookingEndTime = request.EndTime;
