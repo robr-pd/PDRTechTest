@@ -69,6 +69,11 @@ namespace PDR.PatientBookingApi.Controllers
             return StatusCode(200);
         }
 
+        /// <summary>
+        /// Delete patient booking (order) for given identifier
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpDelete()]
         public IActionResult CancelBooking(CancelBookingRequest request)
         {
