@@ -20,6 +20,10 @@ namespace PDR.PatientBooking.Service.BookingServices
             _validator = validator;
         }
 
+        /// <summary>
+        ///  validate and add booking to the db
+        /// </summary>
+        /// <param name="request"></param>
         public void AddPatientBooking(NewBookingRequest request)
         {
             var validationResult = _validator.ValidateRequest(request);
@@ -52,6 +56,21 @@ namespace PDR.PatientBooking.Service.BookingServices
 
             _context.Order.AddRange(new List<Order> { myBooking });
             _context.SaveChanges();
+        }
+
+        /// <summary>
+        /// method to cancel booking
+        /// </summary>
+        /// <param name="bookingId"></param>
+        public void CancelPatientBooking(Guid bookingId)
+        {
+            var existingBooking = _context.Order.FirstOrDefault(f => f.Id == bookingId);
+            if (existingBooking != null && existingBooking.PatientId > 0)
+            {
+                // no object order did not find order so had to remove found booking against given identifier
+                _context.Remove(existingBooking);
+                _context.SaveChanges();
+            }
         }
     }
 }
