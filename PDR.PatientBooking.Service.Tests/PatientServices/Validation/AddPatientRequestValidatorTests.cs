@@ -25,7 +25,7 @@ namespace PDR.PatientBooking.Service.Tests.PatientServices.Validation
             // Boilerplate
             _fixture = new Fixture();
 
-            //Prevent fixture from generating from entity circular references 
+            //Prevent fixture from generating from entity circular references
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior(1));
 
             // Mock setup
@@ -42,7 +42,6 @@ namespace PDR.PatientBooking.Service.Tests.PatientServices.Validation
 
         private void SetupMockDefaults()
         {
-
         }
 
         [Test]
@@ -122,7 +121,14 @@ namespace PDR.PatientBooking.Service.Tests.PatientServices.Validation
 
             //assert
             res.PassedValidation.Should().BeFalse();
-            res.Errors.Should().Contain("Email must be a valid email address");
+            if (string.IsNullOrEmpty(email))
+            {
+                res.Errors.Should().Contain("Email must be populated");
+            }
+            else
+            {
+                res.Errors.Should().Contain("Email must be a valid email address");
+            }
         }
 
         [TestCase("user@domain.com")]
@@ -179,11 +185,11 @@ namespace PDR.PatientBooking.Service.Tests.PatientServices.Validation
         public void ValidateRequest_ClinicDoesNotExist_ReturnsFailedValidationResult()
         {
             //arrange
-            var request = GetValidRequest();
-            request.ClinicId++; //offset clinicId
-
+            var request = _fixture.Create<AddPatientRequest>();
+            // assigning valid email address
+            request.Email = "anyEmail@domain.nodomain";
             //act
-            var res = _addPatientRequestValidator.ValidateRequest(_fixture.Create<AddPatientRequest>());
+            var res = _addPatientRequestValidator.ValidateRequest(request);
 
             //assert
             res.PassedValidation.Should().BeFalse();

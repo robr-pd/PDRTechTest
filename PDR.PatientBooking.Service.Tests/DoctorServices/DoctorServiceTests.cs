@@ -107,7 +107,11 @@ namespace PDR.PatientBooking.Service.Tests.DoctorServices
             _doctorService.AddDoctor(request);
 
             //assert
-            _context.Doctor.Should().ContainEquivalentOf(expected, options => options.Excluding(doctor => doctor.Id));
+            // exclude patientId and Created because created out of scope in AddDoctor method
+            _context.Doctor.Should()
+                .ContainEquivalentOf(expected, options => options
+                    .Excluding(doctor => doctor.Id)
+                    .Excluding(doctor => doctor.Created));
         }
 
         [Test]
