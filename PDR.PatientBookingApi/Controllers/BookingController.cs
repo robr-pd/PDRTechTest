@@ -26,6 +26,10 @@ namespace PDR.PatientBookingApi.Controllers
                     PatientId = identificationNumber
                 }));
             }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, ex);
@@ -41,6 +45,10 @@ namespace PDR.PatientBookingApi.Controllers
                 
                 return Ok();
             }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, ex);
@@ -55,6 +63,10 @@ namespace PDR.PatientBookingApi.Controllers
                 _bookingService.CancelBooking(request);
                 
                 return Ok();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
