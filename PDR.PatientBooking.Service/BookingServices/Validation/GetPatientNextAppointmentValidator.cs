@@ -50,7 +50,7 @@ namespace PDR.PatientBooking.Service.BookingServices.Validation
         
         private bool AppointmentsExistForPatient(GetPatientNextAppointmentRequest request, ref PdrValidationResult result)
         {
-            if (!_context.Order.Any(x => x.Patient.Id == request.PatientId && x.Status == Status.Active && x.StartTime > request.CurrentDateTime))
+            if (!_context.Order.Any(x => x.PatientId == request.PatientId && x.Status == Status.Active && x.StartTime > request.CurrentDateTime))
             {
                 result.PassedValidation = false;
                 result.Errors.Add($"There are no appointments for patient with id - {request.PatientId}");

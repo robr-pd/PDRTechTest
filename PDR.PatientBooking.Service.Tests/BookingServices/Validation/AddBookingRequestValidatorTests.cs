@@ -181,11 +181,11 @@ namespace PDR.PatientBooking.Service.Tests.BookingServices.Validation
         private void SeedDatabase(AddBookingRequest request)
         {
             var doctor = _fixture.Build<Doctor>()
-                .With(x => x.Id, 1)
+                .With(x => x.Id, request.DoctorId)
                 .Create();
 
             var patient = _fixture.Build<Patient>()
-                .With(x => x.Id, 1)
+                .With(x => x.Id, request.PatientId)
                 .Create();
 
 
