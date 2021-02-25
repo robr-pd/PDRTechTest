@@ -125,7 +125,6 @@ namespace PDR.PatientBooking.Data.DataSeed
                     FirstName = "Mac",
                     LastName = "Guffin",
                     Gender = 1,
-                    Created = DateTime.UtcNow
                 },
                 new Doctor()
                 {
@@ -135,7 +134,6 @@ namespace PDR.PatientBooking.Data.DataSeed
                     FirstName = "Betty",
                     LastName = "Blop",
                     Gender = 0,
-                    Created = DateTime.UtcNow
                 },
                 new Doctor()
                 {
@@ -145,7 +143,6 @@ namespace PDR.PatientBooking.Data.DataSeed
                     FirstName = "Lindsay",
                     LastName = "Mcowat",
                     Gender = 0,
-                    Created = DateTime.UtcNow
                 }
             };
 
