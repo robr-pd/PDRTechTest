@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using PDR.PatientBooking.Data;
+using PDR.PatientBooking.Data.Models;
 using PDR.PatientBooking.Service.BookingServices.Requests;
 using PDR.PatientBooking.Service.Validation;
 
@@ -81,7 +82,7 @@ namespace PDR.PatientBooking.Service.BookingServices.Validation
             if (!_context.Patient.Any(patient => patient.Id == request.PatientId))
             {
                 result.PassedValidation = false;
-                result.Errors.Add($"A patient with Id {request.DoctorId} does not exist");
+                result.Errors.Add($"A patient with Id {request.PatientId} does not exist");
                 return true;
             }
 
@@ -91,7 +92,7 @@ namespace PDR.PatientBooking.Service.BookingServices.Validation
         private bool DoctorIsNotAvailable(AddBookingRequest request, ref PdrValidationResult result)
         {
             var doctorNotAvailable = _context.Order
-                .Any(order => order.DoctorId == request.DoctorId
+                .Any(order => order.DoctorId == request.DoctorId && order.Status == Status.Active
                               && request.StartTime < order.EndTime && order.StartTime < request.EndTime);
 
             if (doctorNotAvailable)
