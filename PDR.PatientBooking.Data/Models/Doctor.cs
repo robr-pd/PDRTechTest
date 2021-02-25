@@ -9,7 +9,7 @@ namespace PDR.PatientBooking.Data.Models
         public Doctor()
         {
             Created = DateTime.UtcNow;
-            Orders = new Collection<Order>();
+            Orders = new List<Order>();
         }
         
         public long Id { get; set; }
