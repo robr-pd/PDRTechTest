@@ -11,11 +11,32 @@ namespace PDR.PatientBooking.Service.BookingServices
     {
         private readonly PatientBookingContext _context;
         private readonly IAddBookingRequestValidator _bookingRequestValidator;
+        private readonly ICancelBookingRequestValidator _cancelBookingRequestValidator;
 
-        public BookingService(PatientBookingContext context, IAddBookingRequestValidator bookingRequestValidator)
+        public BookingService(
+            PatientBookingContext context, 
+            IAddBookingRequestValidator bookingRequestValidator, 
+            ICancelBookingRequestValidator cancelBookingRequestValidator)
         {
             _context = context;
             _bookingRequestValidator = bookingRequestValidator;
+            _cancelBookingRequestValidator = cancelBookingRequestValidator;
+        }
+
+        public void CancelBooking(CancelBookingRequest request)
+        {
+            var validationResult = _cancelBookingRequestValidator.ValidateRequest(request);
+
+            if (!validationResult.PassedValidation)
+            {
+                throw new ArgumentException(validationResult.Errors.First());
+            }
+
+            var booking = _context.Order.Find(request.Id);
+            booking.Status = Status.Cancelled;
+
+            _context.Order.Update(booking);
+            _context.SaveChanges();
         }
 
         public void Add(AddBookingRequest request)

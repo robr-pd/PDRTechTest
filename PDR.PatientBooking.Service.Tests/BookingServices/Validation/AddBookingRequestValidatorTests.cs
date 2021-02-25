@@ -205,5 +205,11 @@ namespace PDR.PatientBooking.Service.Tests.BookingServices.Validation
 
             _context.SaveChanges();
         }
+        
+        [TearDown]
+        public void TearDown()
+        {
+            _context.Database.EnsureDeleted();
+        }
     }
 }

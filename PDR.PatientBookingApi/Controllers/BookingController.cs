@@ -68,6 +68,21 @@ namespace PDR.PatientBookingApi.Controllers
             }
         }
 
+        [HttpPut]
+        public IActionResult CancelBooking(CancelBookingRequest request)
+        {
+            try
+            {
+                _bookingService.CancelBooking(request);
+                
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
+
         private static MyOrderResult UpdateLatestBooking(List<Order> bookings2, int i)
         {
             MyOrderResult latestBooking;

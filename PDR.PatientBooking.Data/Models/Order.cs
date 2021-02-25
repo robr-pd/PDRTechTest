@@ -2,11 +2,18 @@
 
 namespace PDR.PatientBooking.Data.Models
 {
+    public enum Status
+    {
+        Active,
+        Cancelled
+    }
+    
     public class Order
     {
         public Order()
         {
             Id = Guid.NewGuid();
+            Status = Status.Active;
         }
         
         public Guid Id { get; set; }
@@ -17,5 +24,6 @@ namespace PDR.PatientBooking.Data.Models
         public virtual long DoctorId { get; set; }
         public virtual Patient Patient { get; set; }
         public virtual Doctor Doctor { get; set; }
+        public Status Status { get; set; }
     }
 }
